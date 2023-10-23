@@ -1,7 +1,7 @@
 'use strict';
 import * as net from 'net';
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
-import { commands, workspace, ExtensionContext, window, ViewColumn, env, Uri} from 'vscode';
+import { commands, workspace, ExtensionContext, window, ViewColumn, env, Uri } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo, DynamicFeature, ClientCapabilities, DocumentSelector, InitializeParams, RegistrationData, ServerCapabilities, VersionedTextDocumentIdentifier, RegistrationType } from 'vscode-languageclient/node';
 
 var client: LanguageClient = null;
@@ -9,10 +9,10 @@ var client: LanguageClient = null;
 async function configureAndStartClient(context: ExtensionContext) {
 
 	// Startup options for the language server
-	const settings = workspace.getConfiguration("JimpleLSP");
+	const settings = workspace.getConfiguration("FumslLSP");
 	const lspTransport: string = settings.get("lspTransport");
 	let executable = 'java';
-	let relativePath = "jimplelsp-"+ context.extension.packageJSON.version +".jar";
+	let relativePath = "../lsp_jar/FUMSL.ide-1.0.0-SNAPSHOT-ls.jar"
 	let args = ['-jar', context.asAbsolutePath(relativePath)];
 
 	const serverOptionsStdio = {
@@ -32,14 +32,14 @@ async function configureAndStartClient(context: ExtensionContext) {
 			socket.on("error", _ => {
 
 				window.showErrorMessage(
-					"Failed to connect to the Jimple language server. Make sure that the language server is running " +
+					"Failed to connect to the Fumsl language server. Make sure that the language server is running " +
 					"-or- configure the extension to connect via standard IO.", "Open settings", "Reconnect")
-					.then( function( str ){
-						if( str.startsWith("Open") ){
-							commands.executeCommand('workbench.action.openSettings', '@ext:' + context.extension.id);
-						 }else if(str.startsWith("Reconnect")){
+					.then(function (str) {
+						if (str.startsWith("Open")) {
+							//commands.executeCommand('workbench.action.openSettings', '@ext:' + context.extension.id);
+						} else if (str.startsWith("Reconnect")) {
 							configureAndStartClient(context);
-						 }
+						}
 					});
 				client = null;
 			});
@@ -51,23 +51,21 @@ async function configureAndStartClient(context: ExtensionContext) {
 
 	let clientOptions: LanguageClientOptions = {
 
-		documentSelector: [{ scheme: 'file', language: 'jimple' }],
+		documentSelector: [{ scheme: 'file', language: 'fumsl' }],
 		synchronize: {
-			configurationSection: 'JimpleLSP',
+			configurationSection: 'FumslLSP',
 			fileEvents: [
-                workspace.createFileSystemWatcher('**/*.jimple'),
-                workspace.createFileSystemWatcher('**/*.apk'),
-                workspace.createFileSystemWatcher('**/*.jar')
+				workspace.createFileSystemWatcher('**/*.fumsl'),
 			],
 		}
 	};
 
 	// Create the language client and start the client.
-	    client = new LanguageClient('JimpleLSP', 'JimpleLSP', serverOptions, clientOptions);
-    	client.registerFeature(new SupportsShowHTML(client));
-        let disposable = client.start();
-        context.subscriptions.push(disposable);
-        await client.onReady();
+	client = new LanguageClient('JimpleLSP', 'JimpleLSP', serverOptions, clientOptions);
+	client.registerFeature(new SupportsShowHTML(client));
+	let disposable = client.start();
+	context.subscriptions.push(disposable);
+	await client.onReady();
 }
 
 export class SupportsShowHTML implements DynamicFeature<undefined> {
@@ -76,8 +74,8 @@ export class SupportsShowHTML implements DynamicFeature<undefined> {
 
 	constructor(private _client: LanguageClient) {
 
-    }
-	
+	}
+
 	fillInitializeParams?: (params: InitializeParams) => void;
 	fillClientCapabilities(capabilities: ClientCapabilities): void {
 		capabilities.experimental = {
@@ -87,36 +85,36 @@ export class SupportsShowHTML implements DynamicFeature<undefined> {
 
 	initialize(capabilities: ServerCapabilities<any>, documentSelector: DocumentSelector): void {
 		let client = this._client;
-        client.onNotification("magpiebridge/showHTML",(content: string)=>{
-			 const panel = window.createWebviewPanel("Configuration", "MagpieBridge Control Panel",ViewColumn.One,{
-				 enableScripts: true
-			 });
-			 panel.webview.html = content;
-			 panel.webview.onDidReceiveMessage(
+		client.onNotification("magpiebridge/showHTML", (content: string) => {
+			const panel = window.createWebviewPanel("Configuration", "MagpieBridge Control Panel", ViewColumn.One, {
+				enableScripts: true
+			});
+			panel.webview.html = content;
+			panel.webview.onDidReceiveMessage(
 				message => {
-					switch(message.command){
+					switch (message.command) {
 						case 'action':
-							 var httpRequest = new XMLHttpRequest();
-							 var url = message.text;
-							 httpRequest.open('GET',url);
-							 httpRequest.send();
-							 return ;
+							var httpRequest = new XMLHttpRequest();
+							var url = message.text;
+							httpRequest.open('GET', url);
+							httpRequest.send();
+							return;
 						case 'configuration':
-							 var httpRequest = new XMLHttpRequest();
-							 var splits = message.text.split("?");
-							 var url = splits[0];
-							 var formData = splits[1];
-							 httpRequest.open('POST',url);
-							 httpRequest.send(formData);
-							 return ;
+							var httpRequest = new XMLHttpRequest();
+							var splits = message.text.split("?");
+							var url = splits[0];
+							var formData = splits[1];
+							httpRequest.open('POST', url);
+							httpRequest.send(formData);
+							return;
 
 					}
 				}
-			 );
-			})
+			);
+		})
 	}
 
-	register( data: RegistrationData<undefined>): void {
+	register(data: RegistrationData<undefined>): void {
 
 	}
 	unregister(id: string): void {
@@ -129,42 +127,9 @@ export class SupportsShowHTML implements DynamicFeature<undefined> {
 }
 
 
-function showWelcomeMessage(context: ExtensionContext) {
-	let previousVersion = context.globalState.get<string>('jimplelsp-version');
-	let currentVersion = context.extension.packageJSON.version;
-	let message : string | null = null;
-	let previousVersionArray = previousVersion ? previousVersion.split('.').map((s: string) => Number(s)) : [0, 0, 0];
-	let currentVersionArray = currentVersion.split('.').map((s: string) => Number(s));
-	if (previousVersion === undefined || previousVersion.length === 0) {
-		message = "Thanks for using JimpleLSP!\n";
-	} else if (currentVersion !== previousVersion && (
-		(previousVersionArray[0] === currentVersionArray[0] && previousVersionArray[1] === currentVersionArray[1] && previousVersionArray[2] < currentVersionArray[2]) ||
-		(previousVersionArray[0] === currentVersionArray[0] && previousVersionArray[1] < currentVersionArray[1]) ||
-		(previousVersionArray[0] < currentVersionArray[0])
-	)
-	) {
-		message = "JimpleLSP Plugin updated to " + currentVersion + ".\n";
-	}
-	if (message) {
-		window.showInformationMessage(message, 'Settings', '⭐️ Star on Github', '🐞 Report Bug')
-			.then(function (val: string | undefined) {
-				/*if (val === '⭐️ Rate') {
-					env.openExternal(vscode.Uri.parse('https://marketplace.visualstudio.com/items?itemName=swissiety.jimplelsp&ssr=false#review-details'));
-				} else */
-				if( val === 'Settings'){
-    				commands.executeCommand('workbench.action.openSettings', '@ext:' + context.extension.id);
-				}else if (val === '🐞 Report Bug') {
-					env.openExternal(Uri.parse('https://github.com/swissiety/JimpleLSP/issues'));
-				} else if (val === '⭐️ Star on Github') {
-					env.openExternal(Uri.parse('https://github.com/swissiety/JimpleLSP'));
-				}
-			});
-		context.globalState.update('jimplelsp-version', currentVersion);
-	}
-}
+
 
 export async function activate(context: ExtensionContext) {
-    showWelcomeMessage(context);
 	configureAndStartClient(context);
 	workspace.onDidChangeConfiguration(e => {
 		if (client)
