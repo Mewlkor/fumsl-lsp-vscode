@@ -1,0 +1,87 @@
+{
+	"displayName": "FumslLSP",
+	"name": "fumsllsp",
+	"description": "A Language Server implementation for Soots Jimple powered by FutureSoot & the MagpieBridge framework.",
+	"author": "Markus Schmidt",
+	"license": "MIT",
+	"version": "0.1.0",
+	"engines": {
+		"vscode": "^1.56.0"
+	},
+	"activationEvents": [
+		"onLanguage:fumsl"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"languages": [
+			{
+				"id": "fumsl",
+				"aliases": [
+					"Fumsl",
+					"fumsl"
+				],
+				"extensions": [
+					".Fumsl",
+					".fumsl"
+				]
+			}
+		],
+		"configuration": {
+			"title": "FumslLSP",
+			"properties": {
+				"JimpleLSP.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VS Code and the language server."
+				},
+				"JimpleLSP.lspTransport": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"stdio",
+						"socket"
+					],
+					"default": "stdio",
+					"description": "Specifies the mode of transport used to communicate with the Fumsl language server."
+				}
+			}
+		},
+		"configurationDefaults": {
+			"[jimple]": {
+				"editor.semanticHighlighting.enabled": true
+			}
+		}
+	},
+	"scripts": {
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+		"esbuild": "npm run -S esbuild-base -- --sourcemap",
+		"esbuild-watch": "npm run -S esbuild-base -- --sourcemap --watch",
+		"test-compile": "tsc -p ./"
+	},
+	"dependencies": {
+		"vscode-languageclient": "^7.0.0",
+		"xmlhttprequest-ts": "^1.0.1"
+	},
+	"devDependencies": {
+		"@angular/common": "^5.0.0",
+		"@angular/core": "^5.0.0",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^11.15.53",
+		"esbuild": "^0.11.23",
+		"rxjs": "^5.5.12",
+		"tslint": "^5.15.0",
+		"typescript": "^3.4.2",
+		"vsce": "^1.88.0",
+		"vscode": "^1.1.37",
+		"zone.js": "^0.8.29"
+	}
+}

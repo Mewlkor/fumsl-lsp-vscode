@@ -1,0 +1,19 @@
+TARGET java.security.KeyPair
+
+VARS
+	java.security.PrivateKey privateKey, retPrivateKey
+	java.security.PublicKey publicKey, retPublicKey
+	
+METHODS
+	Ctor: KeyPair(publicKey, privateKey)
+		requires generatedPrivkey[privateKey], generatedPubkey[publicKey]
+		ensures generatedKeypair[this, _]
+	
+	GetPriv: retPrivateKey = getPrivate()
+		ensures generatedPrivkey[retPrivateKey] 
+
+	GetPubl: retPublicKey = getPublic()
+		ensures generatedPubkey[retPublicKey]
+	
+FLOW
+	Ctor, (GetPriv | GetPubl)*
