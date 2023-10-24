@@ -1,1 +1,8 @@
- 
+TARGET com.git
+VARS
+    java.security.privateKey Key
+
+METHODS
+    a1: string(Key)
+
+FLOW

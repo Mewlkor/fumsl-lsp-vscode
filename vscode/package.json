@@ -5,6 +5,7 @@
 	"author": "Markus Schmidt",
 	"license": "MIT",
 	"version": "0.1.0",
+	"publisher": "Mewlkor",
 	"engines": {
 		"vscode": "^1.56.0"
 	},

@@ -9,8 +9,6 @@ var client: LanguageClient = null;
 async function configureAndStartClient(context: ExtensionContext) {
 
 	// Startup options for the language server
-	const settings = workspace.getConfiguration("FumslLSP");
-	const lspTransport: string = settings.get("lspTransport");
 	let executable = 'java';
 	let relativePath = "../lsp_jar/FUMSL.ide-1.0.0-SNAPSHOT-ls.jar"
 	let args = ['-jar', context.asAbsolutePath(relativePath)];
@@ -46,8 +44,7 @@ async function configureAndStartClient(context: ExtensionContext) {
 		})
 	}
 
-	const serverOptions: ServerOptions =
-		(lspTransport === "stdio") ? serverOptionsStdio : (lspTransport === "socket") ? serverOptionsSocket : null
+	const serverOptions: ServerOptions = serverOptionsStdio
 
 	let clientOptions: LanguageClientOptions = {
 
@@ -61,7 +58,7 @@ async function configureAndStartClient(context: ExtensionContext) {
 	};
 
 	// Create the language client and start the client.
-	client = new LanguageClient('JimpleLSP', 'JimpleLSP', serverOptions, clientOptions);
+	client = new LanguageClient('FumslLSP', 'FumslLSP', serverOptions, clientOptions);
 	client.registerFeature(new SupportsShowHTML(client));
 	let disposable = client.start();
 	context.subscriptions.push(disposable);
