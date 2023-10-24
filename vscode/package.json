@@ -1,8 +1,8 @@
 {
 	"displayName": "FumslLSP",
 	"name": "fumsllsp",
-	"description": "A Language Server implementation for Soots Jimple powered by FutureSoot & the MagpieBridge framework.",
-	"author": "Markus Schmidt",
+	"description": "A Language Server for Fumsl DSL.",
+	"author": "Markus Schmidt, Florian Gruß",
 	"license": "MIT",
 	"version": "0.1.0",
 	"publisher": "Mewlkor",
@@ -30,7 +30,7 @@
 		"configuration": {
 			"title": "FumslLSP",
 			"properties": {
-				"JimpleLSP.trace.server": {
+				"FumslLsp.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
@@ -38,10 +38,10 @@
 						"messages",
 						"verbose"
 					],
-					"default": "off",
+					"default": "verbose",
 					"description": "Traces the communication between VS Code and the language server."
 				},
-				"JimpleLSP.lspTransport": {
+				"FumslLsp.lspTransport": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
@@ -54,7 +54,7 @@
 			}
 		},
 		"configurationDefaults": {
-			"[jimple]": {
+			"[fumsl]": {
 				"editor.semanticHighlighting.enabled": true
 			}
 		}

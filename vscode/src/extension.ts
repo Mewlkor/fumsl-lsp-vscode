@@ -9,6 +9,7 @@ var client: LanguageClient = null;
 async function configureAndStartClient(context: ExtensionContext) {
 
 	// Startup options for the language server
+	const settings = workspace.getConfiguration("FumslLSP")
 	let executable = 'java';
 	let relativePath = "../lsp_jar/FUMSL.ide-1.0.0-SNAPSHOT-ls.jar"
 	let args = ['-jar', context.asAbsolutePath(relativePath)];
