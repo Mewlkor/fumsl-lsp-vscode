@@ -27,6 +27,31 @@
 				]
 			}
 		],
+		"grammars": [
+			{
+				"language": "fumsl",
+				"scopeName": "source.fumsl",
+				"path": "./syntaxes/fumsl.tmGrammar.json"
+			}
+		],
+		"configuration": [
+			{
+				"title": "FumslLSP",
+				"properties": {
+					"FumslLSP.trace.server": {
+						"scope": "window",
+						"type": "string",
+						"enum": [
+							"off",
+							"messages",
+							"verbose"
+						],
+						"default": "off",
+						"description": "Traces the communication between VSCode and the FumslLSP server."
+					}
+				}
+			}
+		],
 		"configurationDefaults": {
 			"[fumsl]": {
 				"editor.semanticHighlighting.enabled": true

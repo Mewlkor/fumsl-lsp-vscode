@@ -39,6 +39,7 @@ async function configureAndStartClient(context: ExtensionContext) {
 
 export async function activate(context: ExtensionContext) {
 	configureAndStartClient(context);
+
 }
 
 

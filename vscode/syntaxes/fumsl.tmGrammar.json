@@ -1,0 +1,99 @@
+{
+    "scopeName": "source.fumsl",
+    "patterns": [
+        {
+            "include": "#expression"
+        }
+    ],
+    "repository": {
+        "expression": {
+            "patterns": [
+                {
+                    "include": "#section"
+                },
+                {
+                    "include": "#paren-expression"
+                },
+                {
+                    "include": "#method-sig"
+                },
+                {
+                    "include": "#operator"
+                },
+                {
+                    "include": "#target"
+                },
+                {
+                    "include": "#lable"
+                }
+            ]
+        },
+        "lable": {
+            "match": "(\\b([a-zA-Z0-9_]+):\\s*)|(\\b([a-zA-Z0-9_]+)\\s:=)",
+            "captures": {
+                "2": {
+                    "name": "entity.name.section"
+                },
+                "4": {
+                    "name": "entity.name.section"
+                }
+            },
+            "name": "meta.function.label"
+        },
+        "section": {
+            "match": "\\b(TARGET|TEMPLATE|VARS|VAR|METHODS|METHOD|FLOWS|FLOW|EXCEPTIONS|EXCEPTION|CONSTRAINTS|CONSTRAINT)\\b",
+            "name": "keyword.section"
+        },
+        "target": {
+            "match": "\\b(ensures|requires|denies|revokes|expects|else|invalidates|throws|overrides)\\b",
+            "captures": {
+                "1": {
+                    "name": "entity.name.type"
+                }
+            },
+            "name": "meta.target"
+        },
+        "operator": {
+            "match": "(\\sin\\s)|(\\|\\|)|(<=)|(>=)|(==)|(!=)|(\\+\\+)|(\\+=)|(--)|(-=)|(\\*=)|(/=)|(\\*=)|(&&)|(\\|\\|)|(\\+)|(\\-)|(\\*)|(\\/)|(\\^)|(\\%)|(\\=)|(\\>)|(\\<)|(\\!)|(\\&)|(\\|)|(\\?)|(\\:)|(\\,)|(\\[)|(\\])|(\\{)|(\\})|(\\()|(\\))|(\\;)|(\\~)|(\\^)",
+            "name": "keyword.operator"
+        },
+        "method-sig": {
+            "match": "(\\b([a-zA-Z0-9_]+)\\s*\\()|(\\b([a-zA-Z0-9_]+)\\s*\\[)",
+            "captures": {
+                "1": {
+                    "name": "keyword.operator"
+                },
+                "2": {
+                    "name": "entity.name.function"
+                },
+                "3": {
+                    "name": "keyword.operator"
+                },
+                "4": {
+                    "name": "entity.name.function"
+                }
+            },
+            "name": "meta.function.method"
+        },
+        "paren-expression": {
+            "begin": "\\{",
+            "end": "\\}",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.paren.open"
+                }
+            },
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.paren.close"
+                }
+            },
+            "name": "expression.group",
+            "patterns": [
+                {
+                    "include": "#expression"
+                }
+            ]
+        }
+    }
+}
