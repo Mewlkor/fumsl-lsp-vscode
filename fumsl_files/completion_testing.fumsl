@@ -4,6 +4,7 @@ VARS
 
 METHODS
     a1: string(Key)
+    a2: int()
 
 FLOW
-    *
+    a1

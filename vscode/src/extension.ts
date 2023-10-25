@@ -1,15 +1,12 @@
 'use strict';
-import * as net from 'net';
-import { XMLHttpRequest } from 'xmlhttprequest-ts';
-import { commands, workspace, ExtensionContext, window, ViewColumn, env, Uri } from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo, DynamicFeature, ClientCapabilities, DocumentSelector, InitializeParams, RegistrationData, ServerCapabilities, VersionedTextDocumentIdentifier, RegistrationType } from 'vscode-languageclient/node';
+import { workspace, ExtensionContext } from 'vscode';
+import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
 
 var client: LanguageClient = null;
 
 async function configureAndStartClient(context: ExtensionContext) {
 
 	// Startup options for the language server
-	const settings = workspace.getConfiguration("FumslLSP")
 	let executable = 'java';
 	let relativePath = "../lsp_jar/FUMSL.ide-1.0.0-SNAPSHOT-ls.jar"
 	let args = ['-jar', context.asAbsolutePath(relativePath)];
@@ -17,32 +14,6 @@ async function configureAndStartClient(context: ExtensionContext) {
 	const serverOptionsStdio = {
 		run: { command: executable, args: args },
 		debug: { command: executable, args: args }
-	}
-
-	const serverOptionsSocket = () => {
-		const socket = net.connect({ port: 2403 })
-		const result: StreamInfo = {
-			writer: socket,
-			reader: socket
-		}
-
-		return new Promise<StreamInfo>((resolve) => {
-			socket.on("connect", () => resolve(result))
-			socket.on("error", _ => {
-
-				window.showErrorMessage(
-					"Failed to connect to the Fumsl language server. Make sure that the language server is running " +
-					"-or- configure the extension to connect via standard IO.", "Open settings", "Reconnect")
-					.then(function (str) {
-						if (str.startsWith("Open")) {
-							//commands.executeCommand('workbench.action.openSettings', '@ext:' + context.extension.id);
-						} else if (str.startsWith("Reconnect")) {
-							configureAndStartClient(context);
-						}
-					});
-				client = null;
-			});
-		})
 	}
 
 	const serverOptions: ServerOptions = serverOptionsStdio
@@ -60,81 +31,14 @@ async function configureAndStartClient(context: ExtensionContext) {
 
 	// Create the language client and start the client.
 	client = new LanguageClient('FumslLSP', 'FumslLSP', serverOptions, clientOptions);
-	client.registerFeature(new SupportsShowHTML(client));
 	let disposable = client.start();
 	context.subscriptions.push(disposable);
 	await client.onReady();
 }
 
-export class SupportsShowHTML implements DynamicFeature<undefined> {
-
-	registrationType: RegistrationType<undefined>;
-
-	constructor(private _client: LanguageClient) {
-
-	}
-
-	fillInitializeParams?: (params: InitializeParams) => void;
-	fillClientCapabilities(capabilities: ClientCapabilities): void {
-		capabilities.experimental = {
-			supportsShowHTML: true,
-		}
-	}
-
-	initialize(capabilities: ServerCapabilities<any>, documentSelector: DocumentSelector): void {
-		let client = this._client;
-		client.onNotification("magpiebridge/showHTML", (content: string) => {
-			const panel = window.createWebviewPanel("Configuration", "MagpieBridge Control Panel", ViewColumn.One, {
-				enableScripts: true
-			});
-			panel.webview.html = content;
-			panel.webview.onDidReceiveMessage(
-				message => {
-					switch (message.command) {
-						case 'action':
-							var httpRequest = new XMLHttpRequest();
-							var url = message.text;
-							httpRequest.open('GET', url);
-							httpRequest.send();
-							return;
-						case 'configuration':
-							var httpRequest = new XMLHttpRequest();
-							var splits = message.text.split("?");
-							var url = splits[0];
-							var formData = splits[1];
-							httpRequest.open('POST', url);
-							httpRequest.send(formData);
-							return;
-
-					}
-				}
-			);
-		})
-	}
-
-	register(data: RegistrationData<undefined>): void {
-
-	}
-	unregister(id: string): void {
-
-	}
-	dispose(): void {
-
-	}
-
-}
-
-
-
 
 export async function activate(context: ExtensionContext) {
 	configureAndStartClient(context);
-	workspace.onDidChangeConfiguration(e => {
-		if (client)
-			client.stop().then(() => configureAndStartClient(context));
-		else
-			configureAndStartClient(context)
-	})
 }
 
 
