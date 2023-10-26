@@ -7,7 +7,7 @@
 	"version": "0.1.0",
 	"publisher": "Mewlkor",
 	"engines": {
-		"vscode": "^1.56.0"
+		"vscode": "^1.83.0"
 	},
 	"activationEvents": [
 		"onLanguage:fumsl"
@@ -61,27 +61,26 @@
 	"scripts": {
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
-		"postinstall": "node ./node_modules/vscode/bin/install",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
 		"esbuild": "npm run -S esbuild-base -- --sourcemap",
 		"esbuild-watch": "npm run -S esbuild-base -- --sourcemap --watch",
 		"test-compile": "tsc -p ./"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^7.0.0",
-		"xmlhttprequest-ts": "^1.0.1"
+		"vscode-languageclient": "^7.0.0"
 	},
 	"devDependencies": {
-		"@angular/common": "^5.0.0",
-		"@angular/core": "^5.0.0",
-		"@types/mocha": "^5.2.6",
-		"@types/node": "^11.15.53",
-		"esbuild": "^0.11.23",
-		"rxjs": "^5.5.12",
-		"tslint": "^5.15.0",
-		"typescript": "^3.4.2",
-		"vsce": "^1.88.0",
-		"vscode": "^1.1.37",
-		"zone.js": "^0.8.29"
+		"@types/mocha": "^10.0.2",
+		"@types/node": "18.x",
+		"@types/vscode": "^1.83.0",
+		"@typescript-eslint/eslint-plugin": "^6.7.3",
+		"@typescript-eslint/parser": "^6.7.3",
+		"@vscode/test-electron": "^2.3.4",
+		"@vscode/vsce": "^2.21.1",
+		"esbuild": "^0.19.5",
+		"eslint": "^8.50.0",
+		"glob": "^10.3.3",
+		"mocha": "^10.2.0",
+		"typescript": "^5.2.2"
 	}
 }

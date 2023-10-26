@@ -8,15 +8,15 @@ async function configureAndStartClient(context: ExtensionContext) {
 
 	// Startup options for the language server
 	let executable = 'java';
-	let relativePath = "../lsp_jar/FUMSL.ide-1.0.0-SNAPSHOT-ls.jar"
+	let relativePath = "./FUMSL.ide-1.0.0-SNAPSHOT-ls.jar";
 	let args = ['-jar', context.asAbsolutePath(relativePath)];
 
 	const serverOptionsStdio = {
 		run: { command: executable, args: args },
 		debug: { command: executable, args: args }
-	}
+	};
 
-	const serverOptions: ServerOptions = serverOptionsStdio
+	const serverOptions: ServerOptions = serverOptionsStdio;
 
 	let clientOptions: LanguageClientOptions = {
 
